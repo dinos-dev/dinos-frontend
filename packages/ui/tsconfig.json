@@ -1,0 +1,7 @@
+{
+  "extends": "@dinos/typescript-config/react-native.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "include": ["src"]
+}

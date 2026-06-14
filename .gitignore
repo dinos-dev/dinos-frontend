@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Turborepo
+.turbo/
+
+# Expo
+.expo/
+dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Native builds
+ios/
+android/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Next.js
+.next/
+out/
+
+# Testing
+coverage/
+
+# Misc
+*.log
