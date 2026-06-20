@@ -2,7 +2,7 @@
 name: feature
 description: 기능 요구사항을 분석하고 에이전트 팀(cmux)을 구성하여 설계 및 구현
 disable-model-invocation: true
-argument-hint: [feature description]
+argument-hint: 'feature description'
 ---
 
 ## 프로젝트 컨텍스트

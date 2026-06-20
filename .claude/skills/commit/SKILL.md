@@ -1,32 +1,54 @@
 ---
 name: commit
-description: Conventional Commits 형식으로 커밋 생성
-disable-model-invocation: true
-argument-hint: [type(scope): message]
-allowed-tools: Bash(git *)
+description: 변경된 파일을 분석해 커밋 메시지 초안을 작성하고 사용자 컨펌 후 커밋 + 푸시. 커밋 시 사용.
 ---
 
-## 현재 상태
+# Commit Skill
 
-!`git status --short`
+## Workflow
 
-## Staged 변경
+1. `git diff --stat` + `git status --short` 로 변경 파일 전체 파악
+2. 변경 내용 분석 → 커밋 메시지 초안 작성
+3. 사용자에게 초안 제시 + 컨펌 요청 (AskUserQuestion)
+4. 승인 → `git add` → `git commit` → `git push`
+5. 수정 요청 → 메시지 수정 후 재확인
 
-!`git diff --cached --stat`
+## 커밋 메시지 형식
 
-## 최근 커밋
+```
+<type>(<scope>): <핵심 내용>
+```
 
-!`git log --oneline -5`
+### type
 
-## Instructions
+| type       | 용도             |
+| ---------- | ---------------- |
+| `feat`     | 새 기능          |
+| `fix`      | 버그 수정        |
+| `refactor` | 리팩토링         |
+| `chore`    | 빌드/설정/의존성 |
+| `docs`     | 문서             |
+| `style`    | 포맷/UI 스타일   |
+| `test`     | 테스트           |
+| `build`    | 빌드 시스템      |
+| `ci`       | CI 설정          |
 
-1. staged 변경사항이 없으면 관련 파일을 `git add`
-2. Conventional Commits 형식:
-   - types: feat, fix, docs, style, refactor, test, chore, build, ci
-   - scope: mobile, web, ui, shared, config, deps (변경된 패키지 기반)
-   - format: `type(scope): description` (소문자, 마침표 없이, 50자 이내)
-3. 인자가 주어지면: `git commit -m "$ARGUMENTS"`
-4. 인자가 없으면: diff를 분석해 적절한 커밋 메시지를 생성하고 커밋
-5. 커밋 메시지에 Co-Authored-By 추가:
-   `Co-Authored-By: Claude <noreply@anthropic.com>`
-6. 커밋 후 `git log --oneline -1`로 확인
+### scope
+
+변경된 앱/패키지: `mobile`, `web`, `ui`, `shared`, `config`, `deps`
+
+### 예시
+
+```
+feat(mobile): implement login screen
+fix(ui): resolve button disabled state
+chore: update pnpm-lock.yaml dependencies
+```
+
+**커밋 메시지는 반드시 영어로 작성**
+
+## 주의사항
+
+- **Co-Authored-By 절대 포함 금지**
+- `package-lock.json`, `pnpm-lock.yaml` 만 변경된 경우 별도 커밋 고려
+- node_modules 절대 포함 금지

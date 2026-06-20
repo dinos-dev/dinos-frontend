@@ -2,7 +2,7 @@
 name: branch
 description: 컨벤션에 맞는 브랜치 생성
 disable-model-invocation: true
-argument-hint: [type/description]
+argument-hint: 'type/description'
 allowed-tools: Bash(git *)
 ---
 
