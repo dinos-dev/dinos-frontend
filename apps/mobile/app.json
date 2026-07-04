@@ -7,6 +7,11 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "dinos",
+    "splash": {
+      "image": "./assets/splash-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.dinos.app"
@@ -24,6 +29,25 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": ["expo-router"]
+    "plugins": [
+      "expo-router",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Pretendard-Thin.otf",
+            "./assets/fonts/Pretendard-ExtraLight.otf",
+            "./assets/fonts/Pretendard-Light.otf",
+            "./assets/fonts/Pretendard-Regular.otf",
+            "./assets/fonts/Pretendard-Medium.otf",
+            "./assets/fonts/Pretendard-SemiBold.otf",
+            "./assets/fonts/Pretendard-Bold.otf",
+            "./assets/fonts/Pretendard-ExtraBold.otf",
+            "./assets/fonts/Pretendard-Black.otf"
+          ]
+        }
+      ],
+      "expo-splash-screen"
+    ]
   }
 }
