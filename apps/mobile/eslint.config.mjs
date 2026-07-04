@@ -5,5 +5,5 @@ import reactConfig from '@dinos/eslint-config/react';
 export default [
   ...baseConfig,
   ...reactConfig,
-  { ignores: ['.expo/**', 'metro.config.js'] },
+  { ignores: ['.expo/**', 'metro.config.js', 'babel.config.js', 'tailwind.config.js'] },
 ];

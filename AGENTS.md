@@ -16,6 +16,7 @@ Turborepo 모노레포 프로젝트.
 - Runtime: Node >= 18, pnpm 9
 - Language: TypeScript (strict mode)
 - State: React Query (서버), Zustand (클라이언트 UI)
+- Styling (mobile): NativeWind v4 (Tailwind for RN)
 - Package Manager: pnpm
 - Build: Turborepo
 

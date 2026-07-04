@@ -22,15 +22,14 @@
 
 ## Agent Workflow
 
-/feature 스킬로 기능 요구사항을 전달하면 Agent Teams(cmux)가 구성된다.
+/feature 스킬로 기능 요구사항을 전달하면 에이전트 팀이 구성된다.
 
 에이전트:
 
-- tech-lead (opus): 아키텍처 설계, 복수 방안 도출, 엣지케이스
-- senior-dev (sonnet): 기존 코드 탐색 → 구현
-- ui-ux (sonnet): 컴포넌트 설계, UI 상태 명세
+- tech-lead (opus): 아키텍처 + UI 설계, Codex와 교차 검증
+- senior-dev (sonnet): 코드 탐색 → 구현, Figma→RN 변환
 
-흐름: Phase 1 분석 → Codex 검증 → Gate 1 유저 선택 → Phase 2 상세 설계 → Gate 2 유저 승인 → Phase 3 구현
+흐름: Phase 1 설계(tech-lead + Codex 병렬) → Gate 유저 승인 → Phase 2 구현(senior-dev) → Phase 3 디자인 자동 검증(Figma URL 있을 때)
 
 ## Verification
 
