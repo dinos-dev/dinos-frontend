@@ -1,0 +1,1 @@
+../../../../.agents/skills/feature/references/visual-validation.md
