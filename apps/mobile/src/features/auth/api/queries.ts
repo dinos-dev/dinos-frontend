@@ -5,6 +5,7 @@ import { authKeys } from './keys';
 export function useLocalLogin() {
   return useMutation({
     mutationFn: localLogin,
+    meta: { skipGlobalError: true },
   });
 }
 

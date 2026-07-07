@@ -6,12 +6,9 @@ import {
   setAccessToken,
   clearTokens,
 } from './token-storage';
+import type { ApiResponse } from './api-types';
 import { useAuthStore } from '@/store/auth.store';
 import { useToastStore } from '@/store/toast.store';
-
-interface ApiResponse<T> {
-  result?: T;
-}
 
 interface FailedRequest {
   resolve: (token: string) => void;

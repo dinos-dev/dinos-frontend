@@ -1,10 +1,5 @@
 import type { AxiosError } from 'axios';
-
-export interface ApiErrorResponse {
-  status: number;
-  message: string;
-  error: string;
-}
+import type { ApiErrorResponse } from './api-types';
 
 const ERROR_MESSAGES: Record<string, string> = {
   VALIDATE_ERROR: '입력값이 유효하지 않습니다. 다시 확인해주세요.',

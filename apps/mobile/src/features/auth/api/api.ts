@@ -1,6 +1,6 @@
 import { apiClient } from '@/services/api-client';
+import type { ApiResponse } from '@/services/api-types';
 import type {
-  ApiResponse,
   LocalLoginRequest,
   LoginTokens,
   UserProfile,

@@ -4,6 +4,7 @@ import { clearTokens, getAccessToken } from '@/services/token-storage';
 import { useAuthStore } from '@/store/auth.store';
 import { fetchMyProfile } from '../api/api';
 import { authKeys } from '../api';
+import type { UserProfile } from '../types/auth.types';
 
 export function useAuthSessionBootstrap() {
   const queryClient = useQueryClient();
@@ -22,8 +23,10 @@ export function useAuthSessionBootstrap() {
           return;
         }
 
-        const profile = await fetchMyProfile();
-        queryClient.setQueryData(authKeys.profile(), profile);
+        await queryClient.fetchQuery<UserProfile>({
+          queryKey: authKeys.profile(),
+          queryFn: fetchMyProfile,
+        });
         setAuthenticated();
       } catch {
         await clearTokens();

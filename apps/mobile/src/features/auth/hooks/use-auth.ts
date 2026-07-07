@@ -5,7 +5,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useToastStore } from '@/store/toast.store';
 import { authKeys, useLocalLogin, useLogout } from '../api';
 import { fetchMyProfile } from '../api/api';
-import type { LocalLoginRequest } from '../types/auth.types';
+import type { LocalLoginRequest, UserProfile } from '../types/auth.types';
 
 export function useAuth() {
   const queryClient = useQueryClient();
@@ -19,8 +19,10 @@ export function useAuth() {
     async (body: LocalLoginRequest) => {
       const tokens = await loginMutation.mutateAsync(body);
       await setTokens(tokens.accessToken, tokens.refreshToken);
-      const profile = await fetchMyProfile();
-      queryClient.setQueryData(authKeys.profile(), profile);
+      await queryClient.fetchQuery<UserProfile>({
+        queryKey: authKeys.profile(),
+        queryFn: fetchMyProfile,
+      });
       setAuthenticated();
     },
     [loginMutation, queryClient, setAuthenticated],

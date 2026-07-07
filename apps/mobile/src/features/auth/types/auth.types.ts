@@ -1,10 +1,3 @@
-export interface ApiResponse<T> {
-  status: number;
-  message: string;
-  result?: T;
-  error?: string;
-}
-
 export interface LocalLoginRequest {
   email: string;
   name?: string;
