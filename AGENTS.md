@@ -96,6 +96,59 @@ app/ → features/ → components/ | hooks/ | services/ | utils/
 - Zustand에 서버 데이터 저장 금지
 - 서버 연동 시 api/queries.ts에 React Query 훅 추가
 
+### 비즈니스 로직 패턴 (React Query + Axios)
+
+#### Feature API 레이어 구조
+
+새 feature의 api/ 폴더는 반드시 3파일로 구성:
+
+```
+features/[name]/api/
+  api.ts       # 순수 HTTP 호출 함수 (axios). React Query 의존 없음
+  keys.ts      # Query Key Factory. 계층형 키 정의
+  queries.ts   # useQuery/useMutation 래핑 훅. 외부에 export
+```
+
+- api.ts: apiClient를 사용한 HTTP 호출만. unwrapResult()로 응답 파싱. 사이드이펙트 없음
+- keys.ts: TkDodo 패턴 — `all > list(params) > detail(id)` 계층
+- queries.ts: React Query 훅 래핑만. 비즈니스 로직은 hooks/에서 조합
+
+#### Query Key Factory 규칙
+
+```typescript
+export const reviewKeys = {
+  all: ['reviews'] as const,
+  list: (placeId: number) => [...reviewKeys.all, 'list', placeId] as const,
+  detail: (id: number) => [...reviewKeys.all, 'detail', id] as const,
+};
+```
+
+- queryFn에 전달하는 파라미터는 반드시 key에 포함
+- invalidateQueries 시 계층 활용 (reviewKeys.all로 전체, reviewKeys.list(id)로 특정 목록)
+
+#### 에러 핸들링
+
+- 글로벌: MutationCache.onError가 자동으로 에러 토스트 표시
+- opt-out: 인라인 에러 UI가 필요한 mutation만 `meta: { skipGlobalError: true }` 설정
+- Query 에러: 컴포넌트에서 isError/error로 인라인 처리
+
+#### Mutation 후 캐시 갱신
+
+- 기본: `invalidateQueries` (서버에서 다시 가져옴)
+- 즉각 피드백 필요 시만: optimistic update (좋아요, 북마크 등)
+- setQueryData는 optimistic update 또는 이미 데이터를 동기적으로 보유할 때만
+
+#### 명령형 fetch
+
+- 서버에서 데이터를 가져와 캐시에 넣을 때: `queryClient.fetchQuery()` 사용
+- API 함수 직접 호출 + `setQueryData()` 조합 금지 (캐시 라이프사이클 우회됨)
+
+#### QueryClient 설정 (app/\_layout.tsx)
+
+- queries.retry: 401/403은 제외 (Axios 인터셉터가 토큰 갱신 처리)
+- mutations.retry: 0
+- MutationCache.onError: 글로벌 에러 토스트 (meta.skipGlobalError로 opt-out)
+
 ## Code Conventions
 
 - TypeScript strict, any 금지

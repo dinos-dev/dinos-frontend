@@ -3,9 +3,12 @@ import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import {
   getAccessToken,
   getRefreshToken,
-  setTokens,
+  setAccessToken,
   clearTokens,
 } from './token-storage';
+import type { ApiResponse } from './api-types';
+import { useAuthStore } from '@/store/auth.store';
+import { useToastStore } from '@/store/toast.store';
 
 interface FailedRequest {
   resolve: (token: string) => void;
@@ -24,6 +27,11 @@ function processQueue(error: unknown, token: string | null) {
     }
   }
   failedQueue = [];
+}
+
+async function clearAuthSession(): Promise<void> {
+  await clearTokens();
+  useAuthStore.getState().clearAuth();
 }
 
 export const apiClient = axios.create({
@@ -57,7 +65,8 @@ apiClient.interceptors.response.use(
       (originalRequest as InternalAxiosRequestConfig & { _retry?: boolean })
         ._retry
     ) {
-      await clearTokens();
+      await clearAuthSession();
+      useToastStore.getState().showToast('로그인이 만료되었습니다.', 'error');
       return Promise.reject(error);
     }
 
@@ -78,23 +87,38 @@ apiClient.interceptors.response.use(
     try {
       const refreshToken = await getRefreshToken();
       if (!refreshToken) {
-        await clearTokens();
+        await clearAuthSession();
+        useToastStore.getState().showToast('로그인이 필요합니다.', 'error');
         return Promise.reject(error);
       }
 
-      const { data } = await axios.post<{
-        accessToken: string;
-        refreshToken: string;
-      }>(`${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`, { refreshToken });
+      const { data } = await axios.post<ApiResponse<{ accessToken: string }>>(
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/token/access`,
+        undefined,
+        {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
 
-      await setTokens(data.accessToken, data.refreshToken);
-      processQueue(null, data.accessToken);
+      const accessToken = data.result?.accessToken;
+      if (!accessToken) {
+        await clearAuthSession();
+        useToastStore.getState().showToast('로그인이 만료되었습니다.', 'error');
+        return Promise.reject(error);
+      }
 
-      originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+      await setAccessToken(accessToken);
+      processQueue(null, accessToken);
+
+      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
       return apiClient(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError, null);
-      await clearTokens();
+      await clearAuthSession();
+      useToastStore.getState().showToast('로그인이 만료되었습니다.', 'error');
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;
